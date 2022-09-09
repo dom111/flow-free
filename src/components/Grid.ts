@@ -2,6 +2,7 @@ import Element, { h } from './Element';
 import Path, { Status } from '../lib/Path';
 import Cell from './Cell';
 import PathFinder from '../lib/PathFinder';
+import Point from './Point';
 import { throttle } from 'throttle-debounce';
 
 export class Grid extends Element {
@@ -59,7 +60,9 @@ export class Grid extends Element {
     return new Grid(
       height,
       width,
-      data.map((point: number, index: number) => new Cell(index, point))
+      data.map((point: number, index: number) =>
+        point !== null ? new Point(index, point) : new Cell(index)
+      )
     );
   }
 
@@ -113,7 +116,7 @@ export class Grid extends Element {
         return;
       }
 
-      if (!cell.point()) {
+      if (!(cell instanceof Point)) {
         return;
       }
 
@@ -190,10 +193,10 @@ export class Grid extends Element {
   }
 
   private handleAddCellToCurrentPath(cell: Cell): void {
-    const otherPath = this.pathFromCell(cell),
+    const otherPath = this.pathFromCell(cell, this.#currentPath),
       currentPath = this.#currentPath;
 
-    if (otherPath && otherPath !== currentPath && !cell.point()) {
+    if (otherPath && otherPath !== currentPath && !(cell instanceof Point)) {
       otherPath.breakAt(cell);
       otherPath.pop();
     }
@@ -208,7 +211,14 @@ export class Grid extends Element {
       return;
     }
 
-    const pathFinder = new PathFinder(this, currentPath.last(), cell);
+    const last = currentPath.last();
+
+    // TODO: instead of doing this check, this should never happen...
+    if (!last) {
+      return;
+    }
+
+    const pathFinder = new PathFinder(this, last, cell);
 
     if (pathFinder.isPathAvailable()) {
       pathFinder
@@ -221,7 +231,10 @@ export class Grid extends Element {
     return this.#height;
   }
 
-  private pathFromCell(cell: Cell): Path | null {
+  private pathFromCell(
+    cell: Cell,
+    currentPath: Path | null = null
+  ): Path | null {
     let path = null;
 
     this.#paths.forEach((existingPath) => {
@@ -234,10 +247,16 @@ export class Grid extends Element {
       }
     });
 
-    if (path === null && cell.point() && this.#paths.has(cell.colour())) {
+    if (
+      path === null &&
+      cell instanceof Point &&
+      this.#paths.has(cell.colour())
+    ) {
       path = this.#paths.get(cell.colour());
 
-      if (!path.canAdd(cell)) {
+      if (path !== currentPath && !path.canAdd(cell)) {
+        console.log(path, currentPath);
+        console.log('clearing the path');
         path.clear();
       }
     }

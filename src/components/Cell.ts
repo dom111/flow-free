@@ -6,21 +6,13 @@ export class Cell extends Element {
   #colour: number | null = null;
   #connections: Connection[] = [];
   #index: number;
-  #point: boolean;
 
-  constructor(index: number, point: number | null = null) {
+  constructor(index: number) {
     super(h('.cell'));
 
-    this.#colour = point;
     this.#index = index;
-    this.#point = point !== null;
 
     this.attr('data-i', index.toString());
-
-    if (point !== null) {
-      this.attr('data-id', point.toString());
-      this.attr('data-point');
-    }
   }
 
   colour(): number | null {
@@ -31,15 +23,7 @@ export class Cell extends Element {
     return this.#index;
   }
 
-  point(): boolean {
-    return this.#point;
-  }
-
   setColour(colour: number | null): void {
-    if (this.#point) {
-      throw new TypeError('Cannot change the colour of a point');
-    }
-
     this.#colour = colour;
 
     if (colour === null) {

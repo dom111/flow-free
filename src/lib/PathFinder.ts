@@ -1,6 +1,7 @@
 import { NeighbourDirections, isNeighbour } from './Path';
 import Cell from '../components/Cell';
 import Grid from '../components/Grid';
+import Point from '../components/Point';
 
 type Node = {
   cell: Cell;
@@ -43,7 +44,7 @@ export class PathFinder {
 
       this.neighboursOf(cell).forEach((neighbourCell) => {
         if (
-          neighbourCell.point() &&
+          neighbourCell instanceof Point &&
           this.#from.colour() !== neighbourCell.colour()
         ) {
           return;

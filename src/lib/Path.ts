@@ -1,5 +1,6 @@
 import Cell, { Connection } from '../components/Cell';
 import Grid from '../components/Grid';
+import Point from '../components/Point';
 
 export type NeighbourDirections = 't' | 'r' | 'b' | 'l';
 
@@ -61,8 +62,8 @@ export class Path {
 
     if (
       endChain.length > startChain.length &&
-      this.first().point() &&
-      this.last().point()
+      this.first() instanceof Point &&
+      this.last() instanceof Point
     ) {
       this.#cells.reverse();
     }
@@ -76,7 +77,7 @@ export class Path {
     const last = this.last();
 
     if (last === null) {
-      return cell.point();
+      return cell instanceof Point;
     }
 
     if (this.complete()) {
@@ -85,7 +86,7 @@ export class Path {
 
     return (
       this.isNeighbour(last, cell) &&
-      (!cell.point() || cell.colour() === this.colour())
+      (!(cell instanceof Point) || cell.colour() === this.colour())
     );
   }
 
@@ -108,8 +109,8 @@ export class Path {
       first &&
       last &&
       first !== last &&
-      first.point() &&
-      last.point()
+      first instanceof Point &&
+      last instanceof Point
     );
   }
 
@@ -158,7 +159,7 @@ export class Path {
       cell = this.#cells.pop(),
       last = this.last();
 
-    if (!cell.point()) {
+    if (!(cell instanceof Point)) {
       cell.setColour(null);
     }
 
@@ -185,7 +186,7 @@ export class Path {
 
     this.#cells.push(cell);
 
-    if (!cell.point()) {
+    if (!(cell instanceof Point)) {
       cell.setColour(this.#colour);
     }
 

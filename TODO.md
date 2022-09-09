@@ -1,1 +1,2 @@
+- [x] Fix bug where pathfinding to a `Point` clears the `Path`.
 - [ ] Only preview breaking paths until `Path.status() === Status.FINAL`.
