@@ -1,5 +1,6 @@
 # flow-free
-A JS/CSS exercise to recreate the game Flow Free with minimal components.
+
+A TS/SCSS exercise to recreate the game Flow Free with minimal components.
 
 If you're not familiar with the game, you need to connect the two dots of the
 same colour and ensure the entire board is filled with the flows. You also need
@@ -10,4 +11,4 @@ preloaded that are selected randomly on load.
 
 Demo here:
 
-https://codepen.io/dom111/full/mwJwmM/
+https://dom111.github.io/flow-free
