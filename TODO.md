@@ -3,3 +3,4 @@
 - [ ] Track scoring and when complete.
 - [ ] Level generator.
 - [ ] Level solver (to help with the generator...)
+- [ ] Allow solution to be included in URL hash fragment.
