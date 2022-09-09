@@ -4,9 +4,13 @@ import Grid from './components/Grid';
 import LevelProvider from './lib/LevelProvider';
 import Point from './components/Point';
 
-const levelProvider = new LevelProvider(),
-  [width, height, levelData] = levelProvider.generate(),
-  grid = new Grid(
+const levelProvider = new LevelProvider(location),
+  [width, height, levelData] =
+    location.hash.length > 1
+      ? levelProvider.fromURL()
+      : levelProvider.generate();
+
+const grid = new Grid(
     width,
     height,
     levelData.map((pointColour, index) =>

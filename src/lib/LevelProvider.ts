@@ -43,12 +43,26 @@ const loadFromString = (
 };
 
 export class LevelProvider {
+  #location: Location;
+
+  constructor(location: Location) {
+    this.#location = location;
+  }
+
   generate(
     height: number = -1,
     width: number = -1,
     difficulty: Difficulty = Difficulty.NORMAL
   ): LevelData {
     return loadFromString(...levels[Math.floor(Math.random() * levels.length)]);
+  }
+
+  fromURL(): LevelData {
+    const [width, height, levelString] = JSON.parse(
+      atob(this.#location.hash.slice(1))
+    );
+
+    return loadFromString(width, height, levelString);
   }
 }
 
