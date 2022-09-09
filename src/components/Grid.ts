@@ -12,20 +12,8 @@ export class Grid extends Element {
   #height: number;
   #width: number;
 
-  private constructor(height: number, width: number, cells: Cell[] = []) {
+  constructor(height: number, width: number, cells: Cell[] = []) {
     super(h('.grid'));
-
-    const area = height * width;
-
-    if (cells.length < area) {
-      cells.push(...new Array(area - cells.length).fill(null));
-    }
-
-    const size = Math.sqrt(cells.length);
-
-    if (size !== Math.floor(size)) {
-      throw new TypeError('Invalid cell data');
-    }
 
     this.setSize(height, width);
 
@@ -36,34 +24,6 @@ export class Grid extends Element {
     });
 
     this.bindEvents();
-  }
-
-  static loadFromString(
-    height: number,
-    width: number,
-    gridDefinition: string
-  ): Grid {
-    const matches = gridDefinition.match(/\d+|[a-z]/gi);
-
-    if (matches === null) {
-      throw new TypeError('Invalid grid definition');
-    }
-
-    const data = matches.flatMap((value: string): number | number[] => {
-      if (/^\d+$/.test(value)) {
-        return new Array(parseInt(value)).fill(null);
-      }
-
-      return parseInt(value, 36) - 9;
-    });
-
-    return new Grid(
-      height,
-      width,
-      data.map((point: number, index: number) =>
-        point !== null ? new Point(index, point) : new Cell(index)
-      )
-    );
   }
 
   private bindEvents(): void {

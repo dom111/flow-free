@@ -1,2 +1,5 @@
 - [x] Fix bug where pathfinding to a `Point` clears the `Path`.
 - [ ] Only preview breaking paths until `Path.status() === Status.FINAL`.
+- [ ] Track scoring and when complete.
+- [ ] Level generator.
+- [ ] Level solver (to help with the generator...)

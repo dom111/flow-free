@@ -6,7 +6,6 @@ import Point from '../components/Point';
 type Node = {
   cell: Cell;
   stack: Cell[];
-  // parent: Node | null;
 };
 
 const createNode = (cell: Cell, stack: Cell[] = []): Node => ({
