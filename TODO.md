@@ -1,0 +1,1 @@
+- [ ] Only preview breaking paths until `Path.status() === Status.FINAL`.

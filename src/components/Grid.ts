@@ -1,6 +1,7 @@
 import Element, { h } from './Element';
 import Path, { Status } from '../lib/Path';
 import Cell from './Cell';
+import PathFinder from '../lib/PathFinder';
 import { throttle } from 'throttle-debounce';
 
 export class Grid extends Element {
@@ -207,7 +208,13 @@ export class Grid extends Element {
       return;
     }
 
-    // TODO: A* path finder
+    const pathFinder = new PathFinder(this, currentPath.last(), cell);
+
+    if (pathFinder.isPathAvailable()) {
+      pathFinder
+        .shortestPath()
+        .forEach((cell) => this.handleAddCellToCurrentPath(cell));
+    }
   }
 
   height(): number {
