@@ -1,5 +1,6 @@
 import './app.scss';
 import Cell from './components/Cell';
+import Colour from './lib/Colour';
 import Grid from './components/Grid';
 import LevelProvider from './lib/LevelProvider';
 import Point from './components/Point';
@@ -14,7 +15,9 @@ const grid = new Grid(
     height,
     width,
     levelData.map((pointColour, index) =>
-      pointColour === null ? new Cell(index) : new Point(index, pointColour)
+      pointColour === Colour.NONE
+        ? new Cell(index)
+        : new Point(index, pointColour)
     )
   ),
   appContainer = document.getElementById('app');

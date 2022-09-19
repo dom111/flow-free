@@ -4,7 +4,7 @@ import Element, { h } from './Element';
 export type Connection = 't' | 'r' | 'b' | 'l';
 
 export class Cell extends Element {
-  #colour: Colour = null;
+  #colour: Colour = Colour.NONE;
   #connections: Connection[] = [];
   #index: number;
 

@@ -7,7 +7,7 @@ const levels: [number, number, string][] = [
   [6, 5, '1d2a4b2b1c2c10da'],
 ];
 
-type LevelData = [number, number, (null | number)[]];
+type LevelData = [number, number, Colour[]];
 
 enum Difficulty {
   SIMPLE,
@@ -30,16 +30,20 @@ const loadFromString = (
 
   const cells = matches.flatMap((value: string): Colour | Colour[] => {
     if (/^\d+$/.test(value)) {
-      return new Array(parseInt(value)).fill(null);
+      return new Array(parseInt(value)).fill(Colour.NONE);
     }
 
-    return parseInt(value, 36) - 9;
+    if (/^[a-z]/i.test(value)) {
+      return parseInt(value, 36) - 9;
+    }
+
+    throw new TypeError(`Unknown level data '${value}'.`);
   });
 
   const area = height * width;
 
   if (cells.length < area) {
-    cells.push(...new Array(area - cells.length).fill(null));
+    cells.push(...new Array(area - cells.length).fill(Colour.NONE));
   }
 
   return [height, width, cells];

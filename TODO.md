@@ -1,9 +1,10 @@
 - [x] Fix bug where pathfinding to a `Point` clears the `Path`.
-- [ ] Only preview breaking paths until `Path.status() === Status.FINAL`.
+- [ ] Only preview breaking paths, until `Path.status() === Status.FINAL`.
 - [ ] Track scoring and when complete.
 - [ ] Level generator.
 - [ ] Level solver (to help with the generator...)
-- [ ] Allow solution to be included in URL hash fragment.
+- [ ] Allow solutions to be included in level data - `Path`s.
 - [ ] Make a designer (need the solver to prove its doable too)
 - [ ] Add data definition for surrounding walls (allows `Warp`s)
-- [ ] Add `Wall` sub-type of `Cell`.
+- [ ] Add `walls` attribute to `Cell`. Probably another later, not within level data...
+- [ ] Add `Hex` grid.

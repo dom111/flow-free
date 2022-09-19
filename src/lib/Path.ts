@@ -160,7 +160,7 @@ export class Path {
       last = this.last();
 
     if (!(cell instanceof Point)) {
-      cell.setColour(null);
+      cell.setColour(Colour.NONE);
     }
 
     cell.setFinal(false);
