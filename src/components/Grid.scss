@@ -5,18 +5,29 @@
   height: 100vh;
   -webkit-user-select: none;
   user-select: none;
-  width: 100vh;
 
   > div {
-    box-sizing: border-box;
-    border: 1px solid #7f7042;
-    position: relative;
+    aspect-ratio: 1;
     background-image: radial-gradient(
       ellipse at center,
       transparent 0%,
       transparent 20.5%,
       #000 21.484374%
     );
+    border: 1px solid #7f7042;
+    box-sizing: border-box;
+    height: calc(100vh / var(--height));
+    position: relative;
+
+    &.wall {
+      &::before {
+        border: calc(100vh / var(--height) / 32) solid #fff;
+        box-sizing: border-box;
+        content: '';
+        height: 100%;
+        width: 100%;
+      }
+    }
 
     &[data-final] {
       background-image: radial-gradient(
@@ -149,52 +160,52 @@
       top: 35%;
     }
 
-    &[data-id='1'] {
+    &.red {
       background-color: #fc0d1b;
     }
-    &[data-id='2'] {
+    &.green {
       background-color: #0f7f12;
     }
-    &[data-id='3'] {
+    &.blue {
       background-color: #0b24fb;
     }
-    &[data-id='4'] {
+    &.yellow {
       background-color: #eeec33;
     }
-    &[data-id='5'] {
+    &.orange {
       background-color: #fd7f23;
     }
-    &[data-id='6'] {
+    &.light-blue {
       background-color: #2dfffe;
     }
-    &[data-id='7'] {
+    &.pink {
       background-color: #fc28fc;
     }
-    &[data-id='8'] {
+    &.maroon {
       background-color: #a32b2e;
     }
-    &[data-id='9'] {
+    &.purple {
       background-color: #7f0f7e;
     }
-    &[data-id='10'] {
+    &.white {
       background-color: #fff;
     }
-    &[data-id='11'] {
+    &.grey {
       background-color: #a6a6a6;
     }
-    &[data-id='12'] {
+    &.light-green {
       background-color: #29fd2f;
     }
-    &[data-id='13'] {
+    &.beige {
       background-color: #bdb66f;
     }
-    &[data-id='14'] {
+    &.dark-blue {
       background-color: #030e88;
     }
-    &[data-id='15'] {
+    &.teal {
       background-color: #11807f;
     }
-    &[data-id='16'] {
+    &.dark-pink {
       background-color: #fc2293;
     }
   }

@@ -3,18 +3,24 @@ import Cell from './components/Cell';
 import Grid from './components/Grid';
 import LevelProvider from './lib/LevelProvider';
 import Point from './components/Point';
+import Wall from './components/Wall';
 
 const levelProvider = new LevelProvider(location),
-  [width, height, levelData] =
+  [height, width, levelData] =
     location.hash.length > 1
       ? levelProvider.fromURL()
-      : levelProvider.generate();
+      : // : levelProvider.random(7, 5);
+        levelProvider.generate(7, 5);
 
 const grid = new Grid(
-    width,
     height,
-    levelData.map((pointColour, index) =>
-      pointColour === null ? new Cell(index) : new Point(index, pointColour)
+    width,
+    levelData.map((cellDetail, index) =>
+      cellDetail === null
+        ? new Cell(index)
+        : cellDetail === '#'
+        ? new Wall(index)
+        : new Point(index, cellDetail)
     )
   ),
   appContainer = document.getElementById('app');

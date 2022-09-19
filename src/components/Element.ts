@@ -1,5 +1,5 @@
 import BaseElement from '@dom111/element';
-export { h } from '@dom111/element';
+export { h, on, onEach } from '@dom111/element';
 
 export class Element extends BaseElement {
   attr(key: string, value: any = ''): void {

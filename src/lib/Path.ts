@@ -1,19 +1,20 @@
 import Cell, { Connection } from '../components/Cell';
+import Colour from './Colour';
 import Grid from '../components/Grid';
 import Point from '../components/Point';
+import Wall from '../components/Wall';
 
 export type NeighbourDirections = 't' | 'r' | 'b' | 'l';
 
 export const isNeighbour = (
   cell: Cell,
   otherCell: Cell,
-  width: number,
-  height: number
+  height: number,
+  width: number
 ): NeighbourDirections | false => {
   const x = (cell.index() % width) - (otherCell.index() % width),
     y =
-      Math.floor(cell.index() / height) -
-      Math.floor(otherCell.index() / height);
+      Math.floor(cell.index() / width) - Math.floor(otherCell.index() / width);
 
   if (x === -1 && y === 0) {
     return 'l';
@@ -36,17 +37,17 @@ export const isNeighbour = (
 
 export enum Status {
   DRAFT,
-  FINAL,
+  COMMITTED,
   COMPLETE,
 }
 
 export class Path {
   #cells: Cell[] = [];
-  #colour: number;
+  #colour: Colour;
   #grid: Grid;
   #status: Status = Status.DRAFT;
 
-  constructor(colour: number, grid: Grid) {
+  constructor(colour: Colour, grid: Grid) {
     this.#colour = colour;
     this.#grid = grid;
   }
@@ -74,6 +75,10 @@ export class Path {
   }
 
   canAdd(cell: Cell): boolean {
+    if (cell instanceof Wall) {
+      return false;
+    }
+
     const last = this.last();
 
     if (last === null) {
@@ -96,7 +101,17 @@ export class Path {
     }
   }
 
-  colour(): number {
+  clone(status: Status = Status.DRAFT): Path {
+    const path = new Path(this.colour(), this.#grid);
+
+    path.#status = status;
+
+    path.#cells = this.#cells.slice(0);
+
+    return path;
+  }
+
+  colour(): Colour {
     return this.#colour;
   }
 
@@ -126,6 +141,10 @@ export class Path {
     return this.#cells.includes(cell);
   }
 
+  intersects(path: Path): boolean {
+    return this.#cells.some((cell: Cell) => path.includes(cell));
+  }
+
   private isNeighbour(
     cell: Cell,
     otherCell: Cell
@@ -133,8 +152,8 @@ export class Path {
     return isNeighbour(
       cell,
       otherCell,
-      this.#grid.width(),
-      this.#grid.height()
+      this.#grid.height(),
+      this.#grid.width()
     );
   }
 
@@ -148,6 +167,10 @@ export class Path {
 
   length(): number {
     return this.#cells.length;
+  }
+
+  path(): Cell[] {
+    return this.#cells;
   }
 
   pop(): void {
@@ -195,13 +218,13 @@ export class Path {
       cell.addConnection(this.isNeighbour(last, cell) as Connection);
     }
 
-    if (this.complete()) {
-      this.setStatus(Status.COMPLETE);
-    }
+    // if (this.complete()) {
+    //   this.setStatus(Status.COMPLETE);
+    // }
   }
 
   setStatus(status: Status): void {
-    if (this.#status === Status.COMPLETE && status === Status.FINAL) {
+    if (this.#status === Status.COMPLETE || status === Status.COMMITTED) {
       return;
     }
 

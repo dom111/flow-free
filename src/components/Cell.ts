@@ -1,9 +1,10 @@
 import Element, { h } from './Element';
+import Colour, { allColourClasses, colourToClassName } from '../lib/Colour';
 
 export type Connection = 't' | 'r' | 'b' | 'l';
 
 export class Cell extends Element {
-  #colour: number | null = null;
+  #colour: Colour = null;
   #connections: Connection[] = [];
   #index: number;
 
@@ -15,7 +16,7 @@ export class Cell extends Element {
     this.attr('data-i', index.toString());
   }
 
-  colour(): number | null {
+  colour(): Colour | null {
     return this.#colour;
   }
 
@@ -23,16 +24,16 @@ export class Cell extends Element {
     return this.#index;
   }
 
-  setColour(colour: number | null): void {
+  setColour(colour: Colour | null): void {
     this.#colour = colour;
 
-    if (colour === null) {
-      this.removeAttr('data-id');
+    this.removeClass(...allColourClasses);
 
+    if (colour === null) {
       return;
     }
 
-    this.attr('data-id', colour.toString());
+    this.addClass(...colourToClassName(colour));
   }
 
   addConnection(connection: Connection): void {
@@ -43,6 +44,12 @@ export class Cell extends Element {
     this.#connections.push(connection);
 
     this.attr('data-' + connection);
+  }
+
+  clearConnections(): void {
+    this.#connections
+      .splice(0, this.#connections.length)
+      .forEach((connection) => this.removeAttr('data-' + connection));
   }
 
   dropConnection(connection: Connection): void {

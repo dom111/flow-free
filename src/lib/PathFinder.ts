@@ -75,8 +75,8 @@ export class PathFinder {
     return isNeighbour(
       cell,
       otherCell,
-      this.#grid.width(),
-      this.#grid.height()
+      this.#grid.height(),
+      this.#grid.width()
     );
   }
 

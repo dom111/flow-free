@@ -1,24 +1,32 @@
-import Element, { h } from './Element';
+import Element, { h, on } from './Element';
 import Path, { Status } from '../lib/Path';
 import Cell from './Cell';
+import Colour from '../lib/Colour';
 import PathFinder from '../lib/PathFinder';
 import Point from './Point';
-import { throttle } from 'throttle-debounce';
+import PathRepository from '../lib/PathRepository';
 
 export class Grid extends Element {
   #cellMap: Map<HTMLElement, Cell> = new Map();
+  #colours: Colour[] = [];
   #currentPath: Path | null = null;
-  #paths: Map<number, Path> = new Map();
+  #paths: PathRepository;
   #height: number;
   #width: number;
 
   constructor(height: number, width: number, cells: Cell[] = []) {
     super(h('.grid'));
 
+    this.#paths = new PathRepository(this);
+
     this.setSize(height, width);
 
     cells.forEach((cell) => {
       this.#cellMap.set(cell.element(), cell);
+
+      if (cell instanceof Point && !this.#colours.includes(cell.colour())) {
+        this.#colours.push(cell.colour());
+      }
 
       this.append(cell);
     });
@@ -27,8 +35,8 @@ export class Grid extends Element {
   }
 
   private bindEvents(): void {
-    this.onEach(['touchstart', 'mousedown'], (event) => {
-      if (event instanceof MouseEvent && event.buttons !== 1) {
+    this.on('pointerdown', (event) => {
+      if (!event.isPrimary) {
         return;
       }
 
@@ -44,31 +52,18 @@ export class Grid extends Element {
 
       if (
         existingPath &&
-        existingPath.complete() &&
-        existingPath.last() === cell
+        cell instanceof Point &&
+        (existingPath.last() === cell || existingPath.first() === cell)
       ) {
-        this.#currentPath = existingPath;
-
-        existingPath.setStatus(Status.DRAFT);
-
         existingPath.clear();
-
         existingPath.push(cell);
-
-        return;
       }
 
       if (existingPath && existingPath.last() !== cell) {
-        this.#currentPath = existingPath;
-
-        existingPath.setStatus(Status.DRAFT);
-
         existingPath.breakAt(cell);
-
-        return;
       }
 
-      if (existingPath && existingPath.last() === cell) {
+      if (existingPath) {
         this.#currentPath = existingPath;
 
         existingPath.setStatus(Status.DRAFT);
@@ -80,16 +75,19 @@ export class Grid extends Element {
         return;
       }
 
-      const path = new Path(cell.colour(), this);
+      const path = this.#paths.getOrCreateByColourAndStatus(cell.colour());
+
+      path.clear();
 
       this.#currentPath = path;
-      this.#paths.set(path.colour(), path);
+
+      path.push(cell);
     });
 
-    this.onEach(
-      ['touchmove', 'mousemove'],
-      throttle(1000 / 60, (event) => {
-        if (event instanceof MouseEvent && !event.buttons) {
+    this.on(
+      'pointerenter',
+      (event) => {
+        if (!event.isPrimary) {
           return;
         }
 
@@ -99,31 +97,31 @@ export class Grid extends Element {
         if (
           cell === null ||
           currentPath === null ||
-          (currentPath &&
-            currentPath.status() === Status.COMPLETE &&
-            !currentPath.includes(cell)) ||
-          currentPath.last() === cell
+          (currentPath.status() === Status.COMPLETE &&
+            !currentPath.includes(cell))
         ) {
           return;
         }
 
         this.handleAddCellToCurrentPath(cell);
-      })
+      },
+      {
+        capture: true,
+      }
     );
 
-    this.onEach(['touchend', 'mouseup'], () => {
+    this.on('pointerup', () => {
       if (this.#currentPath === null) {
         return;
       }
 
-      // TODO: break crossed paths
-      this.#currentPath.setStatus(Status.FINAL);
-
       if (this.#currentPath.length() < 2) {
         this.#currentPath.clear();
 
-        this.#paths.delete(this.#currentPath.colour());
+        this.#paths.remove(this.#currentPath);
       }
+
+      this.#paths.commit();
 
       this.#currentPath = null;
     });
@@ -133,28 +131,27 @@ export class Grid extends Element {
     return Array.from(this.#cellMap.values());
   }
 
-  private cellFromEvent(event: MouseEvent | TouchEvent): Cell | null {
-    if (event instanceof MouseEvent) {
-      return (
-        this.#cellMap.get(
-          (event.relatedTarget as HTMLElement) || (event.target as HTMLElement)
-        ) ?? null
-      );
-    }
-
+  private cellFromEvent(
+    event: MouseEvent | PointerEvent | TouchEvent
+  ): Cell | null {
     return (
       this.#cellMap.get(
         document.elementFromPoint(
-          event.touches[0].pageX,
-          event.touches[0].pageY
+          event instanceof TouchEvent ? event.touches[0].pageX : event.pageX,
+          event instanceof TouchEvent ? event.touches[0].pageY : event.pageY
         ) as HTMLElement
       ) ?? null
     );
   }
 
   private handleAddCellToCurrentPath(cell: Cell): void {
-    const otherPath = this.pathFromCell(cell, this.#currentPath),
-      currentPath = this.#currentPath;
+    const currentPath = this.#currentPath,
+      otherPath = this.pathFromCell(cell, currentPath);
+
+    // TODO: handle bridge
+    // if (cell instanceof Bridge) {
+    //   // ...
+    // }
 
     if (otherPath && otherPath !== currentPath && !(cell instanceof Point)) {
       otherPath.breakAt(cell);
@@ -162,6 +159,7 @@ export class Grid extends Element {
     }
 
     if (currentPath.includes(cell) && currentPath.last() !== cell) {
+      // TODO: check intersecting paths, before and after the move - update display
       currentPath.breakAt(cell);
     }
 
@@ -193,35 +191,43 @@ export class Grid extends Element {
 
   private pathFromCell(
     cell: Cell,
-    currentPath: Path | null = null
+    currentPath: Path | null = null,
+    status: Status = Status.DRAFT
   ): Path | null {
-    let path = null;
+    const expectedStatuses: Path[] = [],
+      others: Path[] = [];
 
-    this.#paths.forEach((existingPath) => {
-      if (path) {
+    this.#paths.getAllByCell(cell).forEach((path) => {
+      if (currentPath && path === currentPath) {
         return;
       }
 
-      if (existingPath.includes(cell)) {
-        path = existingPath;
+      if (path.status() === status) {
+        expectedStatuses.push(path);
+
+        return;
       }
+
+      others.push(path);
     });
 
-    if (
-      path === null &&
-      cell instanceof Point &&
-      this.#paths.has(cell.colour())
-    ) {
-      path = this.#paths.get(cell.colour());
-
-      if (path !== currentPath && !path.canAdd(cell)) {
-        console.log(path, currentPath);
-        console.log('clearing the path');
-        path.clear();
-      }
+    if (expectedStatuses.length === 1) {
+      return expectedStatuses[0];
     }
 
-    return path;
+    if (expectedStatuses.length > 1) {
+      throw new Error('Logic missing');
+    }
+
+    if (others.length === 1) {
+      return this.#paths.getOrCreateByColourAndStatus(others[0].colour());
+    }
+
+    if (others.length > 1) {
+      throw new Error('Logic missing');
+    }
+
+    return null;
   }
 
   private setSize(height: number, width: number): void {
