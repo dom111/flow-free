@@ -5,18 +5,19 @@
   height: 100vh;
   -webkit-user-select: none;
   user-select: none;
-  width: 100vh;
 
   > div {
-    box-sizing: border-box;
-    border: 1px solid #7f7042;
-    position: relative;
+    aspect-ratio: 1;
     background-image: radial-gradient(
       ellipse at center,
       transparent 0%,
       transparent 20.5%,
       #000 21.484374%
     );
+    border: 1px solid #7f7042;
+    box-sizing: border-box;
+    height: calc(100vh / var(--height));
+    position: relative;
 
     &[data-final] {
       background-image: radial-gradient(
@@ -27,7 +28,7 @@
       );
     }
 
-    &[data-point] {
+    &.point {
       background-image: radial-gradient(
         ellipse at center,
         transparent 0%,
@@ -35,10 +36,11 @@
         #000 50%
       );
     }
-    &[data-point][data-final] {
+    &.point[data-final] {
       background-image: radial-gradient(
         ellipse at center,
         transparent 0%,
+        transparent 49.5%,
         transparent 49.5%,
         rgba(0, 0, 0, 0.8) 50%
       );
@@ -50,151 +52,146 @@
       background-color: inherit;
       display: block;
       position: absolute;
-
-      [data-debug] & {
-        color: #fff;
-        content: attr(data-i);
-      }
     }
 
-    &[data-t]::before {
+    &[data-connections~='t']::before {
       width: 30%;
       height: 50%;
       left: 35%;
       top: -1px;
     }
-    &[data-b]::before {
+    &[data-connections~='b']::before {
       width: 30%;
       height: 50%;
       left: 35%;
       bottom: -1px;
     }
-    &[data-l]::before {
+    &[data-connections~='l']::before {
       width: 50%;
       height: 30%;
       left: -1px;
       top: 35%;
     }
-    &[data-r]::before {
+    &[data-connections~='r']::before {
       width: 50%;
       height: 30%;
       right: -1px;
       top: 35%;
     }
 
-    &[data-t][data-b]::before {
+    &[data-connections~='t'][data-connections~='b']::before {
       width: 30%;
       height: calc(100% + 2px);
       left: 35%;
       top: -1px;
     }
-    &[data-l][data-r]::before {
+    &[data-connections~='l'][data-connections~='r']::before {
       width: calc(100% + 2px);
       height: 30%;
       left: -1px;
       top: 35%;
     }
 
-    &[data-t][data-l]::before {
+    &[data-connections~='t'][data-connections~='l']::before {
       width: 30%;
       height: 50%;
       left: 35%;
       top: -1px;
     }
-    &[data-t][data-l]::after {
+    &[data-connections~='t'][data-connections~='l']::after {
       width: 50%;
       height: 30%;
       left: -1px;
       top: 35%;
     }
 
-    &[data-t][data-r]::before {
+    &[data-connections~='t'][data-connections~='r']::before {
       width: 30%;
       height: 50%;
       left: 35%;
       top: -1px;
     }
-    &[data-t][data-r]::after {
+    &[data-connections~='t'][data-connections~='r']::after {
       width: 50%;
       height: 30%;
       right: -1px;
       top: 35%;
     }
 
-    &[data-b][data-l]::before {
+    &[data-connections~='b'][data-connections~='l']::before {
       width: 30%;
       height: 50%;
       left: 35%;
       top: auto;
       bottom: -1px;
     }
-    &[data-b][data-l]::after {
+    &[data-connections~='b'][data-connections~='l']::after {
       width: 50%;
       height: 30%;
       left: -1px;
       top: 35%;
     }
 
-    &[data-b][data-r]::before {
+    &[data-connections~='b'][data-connections~='r']::before {
       width: 30%;
       height: 50%;
       left: 35%;
       top: auto;
       bottom: -1px;
     }
-    &[data-b][data-r]::after {
+    &[data-connections~='b'][data-connections~='r']::after {
       width: 50%;
       height: 30%;
       right: -1px;
       top: 35%;
     }
 
-    &[data-id='1'] {
+    &.red {
       background-color: #fc0d1b;
     }
-    &[data-id='2'] {
+    &.green {
       background-color: #0f7f12;
     }
-    &[data-id='3'] {
+    &.blue {
       background-color: #0b24fb;
     }
-    &[data-id='4'] {
+    &.yellow {
       background-color: #eeec33;
     }
-    &[data-id='5'] {
+    &.orange {
       background-color: #fd7f23;
     }
-    &[data-id='6'] {
+    &.light-blue {
       background-color: #2dfffe;
     }
-    &[data-id='7'] {
+    &.pink {
       background-color: #fc28fc;
     }
-    &[data-id='8'] {
+    &.maroon {
       background-color: #a32b2e;
     }
-    &[data-id='9'] {
+    &.purple {
       background-color: #7f0f7e;
     }
-    &[data-id='10'] {
+    &.white {
       background-color: #fff;
     }
-    &[data-id='11'] {
+    &.grey {
       background-color: #a6a6a6;
     }
-    &[data-id='12'] {
+    &.light-green {
       background-color: #29fd2f;
     }
-    &[data-id='13'] {
+    &.beige {
       background-color: #bdb66f;
     }
-    &[data-id='14'] {
+    &.dark-blue {
       background-color: #030e88;
     }
-    &[data-id='15'] {
+    &.teal {
       background-color: #11807f;
     }
-    &[data-id='16'] {
+    &.dark-pink {
       background-color: #fc2293;
     }
   }

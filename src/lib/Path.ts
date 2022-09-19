@@ -1,19 +1,19 @@
 import Cell, { Connection } from '../components/Cell';
 import Grid from '../components/Grid';
 import Point from '../components/Point';
+import Colour from './Colour';
 
 export type NeighbourDirections = 't' | 'r' | 'b' | 'l';
 
 export const isNeighbour = (
   cell: Cell,
   otherCell: Cell,
-  width: number,
-  height: number
+  height: number,
+  width: number
 ): NeighbourDirections | false => {
   const x = (cell.index() % width) - (otherCell.index() % width),
     y =
-      Math.floor(cell.index() / height) -
-      Math.floor(otherCell.index() / height);
+      Math.floor(cell.index() / width) - Math.floor(otherCell.index() / width);
 
   if (x === -1 && y === 0) {
     return 'l';
@@ -42,11 +42,11 @@ export enum Status {
 
 export class Path {
   #cells: Cell[] = [];
-  #colour: number;
+  #colour: Colour;
   #grid: Grid;
   #status: Status = Status.DRAFT;
 
-  constructor(colour: number, grid: Grid) {
+  constructor(colour: Colour, grid: Grid) {
     this.#colour = colour;
     this.#grid = grid;
   }
@@ -96,7 +96,7 @@ export class Path {
     }
   }
 
-  colour(): number {
+  colour(): Colour {
     return this.#colour;
   }
 
@@ -133,8 +133,8 @@ export class Path {
     return isNeighbour(
       cell,
       otherCell,
-      this.#grid.width(),
-      this.#grid.height()
+      this.#grid.height(),
+      this.#grid.width()
     );
   }
 

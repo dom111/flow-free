@@ -4,3 +4,6 @@
 - [ ] Level generator.
 - [ ] Level solver (to help with the generator...)
 - [ ] Allow solution to be included in URL hash fragment.
+- [ ] Make a designer (need the solver to prove its doable too)
+- [ ] Add data definition for surrounding walls (allows `Warp`s)
+- [ ] Add `Wall` sub-type of `Cell`.

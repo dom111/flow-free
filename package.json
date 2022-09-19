@@ -24,8 +24,6 @@
     "prettier": "^2.7.1"
   },
   "dependencies": {
-    "@dom111/element": "^0.1.3",
-    "css-what": "^6.1.0",
-    "throttle-debounce": "^5.0.0"
+    "@dom111/element": "^0.1.3"
   }
 }

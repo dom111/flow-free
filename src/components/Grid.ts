@@ -3,7 +3,6 @@ import Path, { Status } from '../lib/Path';
 import Cell from './Cell';
 import PathFinder from '../lib/PathFinder';
 import Point from './Point';
-import { throttle } from 'throttle-debounce';
 
 export class Grid extends Element {
   #cellMap: Map<HTMLElement, Cell> = new Map();
@@ -27,8 +26,8 @@ export class Grid extends Element {
   }
 
   private bindEvents(): void {
-    this.onEach(['touchstart', 'mousedown'], (event) => {
-      if (event instanceof MouseEvent && event.buttons !== 1) {
+    this.on('pointerdown', (event) => {
+      if (!event.isPrimary) {
         return;
       }
 
@@ -86,9 +85,9 @@ export class Grid extends Element {
       this.#paths.set(path.colour(), path);
     });
 
-    this.onEach(
-      ['touchmove', 'mousemove'],
-      throttle(1000 / 60, (event) => {
+    this.on(
+      'pointermove',
+      (event) => {
         if (event instanceof MouseEvent && !event.buttons) {
           return;
         }
@@ -108,10 +107,13 @@ export class Grid extends Element {
         }
 
         this.handleAddCellToCurrentPath(cell);
-      })
+      },
+      {
+        passive: true,
+      }
     );
 
-    this.onEach(['touchend', 'mouseup'], () => {
+    this.on('pointerup', () => {
       if (this.#currentPath === null) {
         return;
       }
@@ -133,21 +135,10 @@ export class Grid extends Element {
     return Array.from(this.#cellMap.values());
   }
 
-  private cellFromEvent(event: MouseEvent | TouchEvent): Cell | null {
-    if (event instanceof MouseEvent) {
-      return (
-        this.#cellMap.get(
-          (event.relatedTarget as HTMLElement) || (event.target as HTMLElement)
-        ) ?? null
-      );
-    }
-
+  private cellFromEvent(event: PointerEvent): Cell | null {
     return (
       this.#cellMap.get(
-        document.elementFromPoint(
-          event.touches[0].pageX,
-          event.touches[0].pageY
-        ) as HTMLElement
+        document.elementFromPoint(event.pageX, event.pageY) as HTMLElement
       ) ?? null
     );
   }
@@ -215,8 +206,6 @@ export class Grid extends Element {
       path = this.#paths.get(cell.colour());
 
       if (path !== currentPath && !path.canAdd(cell)) {
-        console.log(path, currentPath);
-        console.log('clearing the path');
         path.clear();
       }
     }

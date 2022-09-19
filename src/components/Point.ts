@@ -1,16 +1,16 @@
 import Cell from './Cell';
+import Colour from '../lib/Colour';
 
 export class Point extends Cell {
-  constructor(index: number, point: number) {
+  constructor(index: number, colour: Colour) {
     super(index);
 
-    super.setColour(point);
+    super.setColour(colour);
 
-    this.attr('data-id', point.toString());
-    this.attr('data-point');
+    this.addClass('point');
   }
 
-  setColour(colour: number | null) {
+  setColour(colour: Colour): never {
     throw new TypeError('Cannot change the colour of a Point');
   }
 }

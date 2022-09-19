@@ -1,9 +1,10 @@
+import Colour, { colourToClassName } from '../lib/Colour';
 import Element, { h } from './Element';
 
 export type Connection = 't' | 'r' | 'b' | 'l';
 
 export class Cell extends Element {
-  #colour: number | null = null;
+  #colour: Colour = null;
   #connections: Connection[] = [];
   #index: number;
 
@@ -11,11 +12,9 @@ export class Cell extends Element {
     super(h('.cell'));
 
     this.#index = index;
-
-    this.attr('data-i', index.toString());
   }
 
-  colour(): number | null {
+  colour(): Colour {
     return this.#colour;
   }
 
@@ -23,16 +22,18 @@ export class Cell extends Element {
     return this.#index;
   }
 
-  setColour(colour: number | null): void {
+  setColour(colour: Colour): void {
+    if (this.#colour) {
+      this.removeClass(...colourToClassName(this.#colour));
+    }
+
     this.#colour = colour;
 
-    if (colour === null) {
-      this.removeAttr('data-id');
-
+    if (!colour) {
       return;
     }
 
-    this.attr('data-id', colour.toString());
+    this.addClass(...colourToClassName(colour));
   }
 
   addConnection(connection: Connection): void {
@@ -42,7 +43,7 @@ export class Cell extends Element {
 
     this.#connections.push(connection);
 
-    this.attr('data-' + connection);
+    this.attr('data-connections', this.#connections.join(' '));
   }
 
   dropConnection(connection: Connection): void {
@@ -54,7 +55,13 @@ export class Cell extends Element {
 
     this.#connections.splice(connectionIndex, 1);
 
-    this.removeAttr('data-' + connection);
+    if (this.#connections.length === 0) {
+      this.removeAttr('data-connections');
+
+      return;
+    }
+
+    this.attr('data-connections', this.#connections.join(' '));
   }
 
   setFinal(final: boolean) {
