@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(var(--width), 1fr);
   grid-template-rows: repeat(var(--height), 1fr);
-  height: 100vh;
+  //height: 100vh;
   -webkit-user-select: none;
   user-select: none;
 
@@ -16,7 +16,7 @@
     );
     border: 1px solid #7f7042;
     box-sizing: border-box;
-    height: calc(100vh / var(--height));
+    height: min(calc(100vh / var(--height)), calc(100vw / var(--width)));
     position: relative;
 
     &[data-final] {
