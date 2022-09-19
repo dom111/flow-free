@@ -1,5 +1,5 @@
 import Colour, { colourToClassName } from '../lib/Colour';
-import Element, { h } from './Element';
+import Element, { s } from './Element';
 
 export type Connection = 't' | 'r' | 'b' | 'l';
 
@@ -9,7 +9,7 @@ export class Cell extends Element {
   #index: number;
 
   constructor(index: number) {
-    super(h('.cell'));
+    super(s('<div class="cell"></div>'));
 
     this.#index = index;
   }

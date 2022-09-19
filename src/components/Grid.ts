@@ -1,4 +1,4 @@
-import Element, { h } from './Element';
+import Element, { s } from './Element';
 import Path, { Status } from '../lib/Path';
 import Cell from './Cell';
 import PathFinder from '../lib/PathFinder';
@@ -12,7 +12,7 @@ export class Grid extends Element {
   #width: number;
 
   constructor(height: number, width: number, cells: Cell[] = []) {
-    super(h('.grid'));
+    super(s('<div class="grid"></div>'));
 
     this.setSize(height, width);
 

@@ -1,7 +1,7 @@
 import Cell, { Connection } from '../components/Cell';
+import Colour from './Colour';
 import Grid from '../components/Grid';
 import Point from '../components/Point';
-import Colour from './Colour';
 
 export type NeighbourDirections = 't' | 'r' | 'b' | 'l';
 

@@ -1,6 +1,6 @@
 {
   "name": "flow-free",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A TS/SCSS implementation of Flow Free",
   "scripts": {
     "build": "npm run build:esbuild && npm run build:prettier:write",
@@ -24,6 +24,6 @@
     "prettier": "^2.7.1"
   },
   "dependencies": {
-    "@dom111/element": "^0.1.3"
+    "@dom111/element": "^0.2.0"
   }
 }
