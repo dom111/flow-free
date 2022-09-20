@@ -1,8 +1,8 @@
 .grid {
+  background-color: #000;
   display: grid;
   grid-template-columns: repeat(var(--width), 1fr);
   grid-template-rows: repeat(var(--height), 1fr);
-  //height: 100vh;
   -webkit-user-select: none;
   user-select: none;
 
@@ -35,15 +35,16 @@
         transparent 49.5%,
         #000 50%
       );
-    }
-    &.point[data-final] {
-      background-image: radial-gradient(
-        ellipse at center,
-        transparent 0%,
-        transparent 49.5%,
-        transparent 49.5%,
-        rgba(0, 0, 0, 0.8) 50%
-      );
+
+      &[data-final] {
+        background-image: radial-gradient(
+          ellipse at center,
+          transparent 0%,
+          transparent 49.5%,
+          transparent 49.5%,
+          rgba(0, 0, 0, 0.8) 50%
+        );
+      }
     }
 
     &::after,
@@ -60,18 +61,21 @@
       left: 35%;
       top: -1px;
     }
+
     &[data-connections~='b']::before {
       width: 30%;
       height: 50%;
       left: 35%;
       bottom: -1px;
     }
+
     &[data-connections~='l']::before {
       width: 50%;
       height: 30%;
       left: -1px;
       top: 35%;
     }
+
     &[data-connections~='r']::before {
       width: 50%;
       height: 30%;
@@ -79,118 +83,150 @@
       top: 35%;
     }
 
-    &[data-connections~='t'][data-connections~='b']::before {
-      width: 30%;
-      height: calc(100% + 2px);
-      left: 35%;
-      top: -1px;
-    }
-    &[data-connections~='l'][data-connections~='r']::before {
-      width: calc(100% + 2px);
-      height: 30%;
-      left: -1px;
-      top: 35%;
+    &[data-connections~='t'][data-connections~='b'] {
+      &::before {
+        width: 30%;
+        height: calc(100% + 2px);
+        left: 35%;
+        top: -1px;
+      }
     }
 
-    &[data-connections~='t'][data-connections~='l']::before {
-      width: 30%;
-      height: 50%;
-      left: 35%;
-      top: -1px;
-    }
-    &[data-connections~='t'][data-connections~='l']::after {
-      width: 50%;
-      height: 30%;
-      left: -1px;
-      top: 35%;
+    &[data-connections~='l'][data-connections~='r'] {
+      &::before {
+        width: calc(100% + 2px);
+        height: 30%;
+        left: -1px;
+        top: 35%;
+      }
     }
 
-    &[data-connections~='t'][data-connections~='r']::before {
-      width: 30%;
-      height: 50%;
-      left: 35%;
-      top: -1px;
-    }
-    &[data-connections~='t'][data-connections~='r']::after {
-      width: 50%;
-      height: 30%;
-      right: -1px;
-      top: 35%;
+    &[data-connections~='t'][data-connections~='l'] {
+      &::before {
+        width: 30%;
+        height: 50%;
+        left: 35%;
+        top: -1px;
+      }
+
+      &::after {
+        width: 50%;
+        height: 30%;
+        left: -1px;
+        top: 35%;
+      }
     }
 
-    &[data-connections~='b'][data-connections~='l']::before {
-      width: 30%;
-      height: 50%;
-      left: 35%;
-      top: auto;
-      bottom: -1px;
-    }
-    &[data-connections~='b'][data-connections~='l']::after {
-      width: 50%;
-      height: 30%;
-      left: -1px;
-      top: 35%;
+    &[data-connections~='t'][data-connections~='r'] {
+      &::before {
+        width: 30%;
+        height: 50%;
+        left: 35%;
+        top: -1px;
+      }
+
+      &::after {
+        width: 50%;
+        height: 30%;
+        right: -1px;
+        top: 35%;
+      }
     }
 
-    &[data-connections~='b'][data-connections~='r']::before {
-      width: 30%;
-      height: 50%;
-      left: 35%;
-      top: auto;
-      bottom: -1px;
+    &[data-connections~='b'][data-connections~='l'] {
+      &::before {
+        width: 30%;
+        height: 50%;
+        left: 35%;
+        top: auto;
+        bottom: -1px;
+      }
+
+      &::after {
+        width: 50%;
+        height: 30%;
+        left: -1px;
+        top: 35%;
+      }
     }
-    &[data-connections~='b'][data-connections~='r']::after {
-      width: 50%;
-      height: 30%;
-      right: -1px;
-      top: 35%;
+
+    &[data-connections~='b'][data-connections~='r'] {
+      &::before {
+        width: 30%;
+        height: 50%;
+        left: 35%;
+        top: auto;
+        bottom: -1px;
+      }
+
+      &::after {
+        width: 50%;
+        height: 30%;
+        right: -1px;
+        top: 35%;
+      }
     }
 
     &.red {
       background-color: #fc0d1b;
     }
+
     &.green {
       background-color: #0f7f12;
     }
+
     &.blue {
       background-color: #0b24fb;
     }
+
     &.yellow {
       background-color: #eeec33;
     }
+
     &.orange {
       background-color: #fd7f23;
     }
+
     &.light-blue {
       background-color: #2dfffe;
     }
+
     &.pink {
       background-color: #fc28fc;
     }
+
     &.maroon {
       background-color: #a32b2e;
     }
+
     &.purple {
       background-color: #7f0f7e;
     }
+
     &.white {
       background-color: #fff;
     }
+
     &.grey {
       background-color: #a6a6a6;
     }
+
     &.light-green {
       background-color: #29fd2f;
     }
+
     &.beige {
       background-color: #bdb66f;
     }
+
     &.dark-blue {
       background-color: #030e88;
     }
+
     &.teal {
       background-color: #11807f;
     }
+
     &.dark-pink {
       background-color: #fc2293;
     }

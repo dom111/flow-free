@@ -82,13 +82,15 @@ export class Grid extends Element {
       const path = new Path(cell.colour(), this);
 
       this.#currentPath = path;
+
+      path.push(cell);
       this.#paths.set(path.colour(), path);
     });
 
     this.on(
-      'pointermove',
+      'pointerenter',
       (event) => {
-        if (event instanceof MouseEvent && !event.buttons) {
+        if (!event.isPrimary) {
           return;
         }
 
@@ -109,7 +111,7 @@ export class Grid extends Element {
         this.handleAddCellToCurrentPath(cell);
       },
       {
-        passive: true,
+        capture: true,
       }
     );
 

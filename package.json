@@ -1,5 +1,5 @@
 {
-  "name": "flow-free",
+  "name": "@dom111/flow-free",
   "version": "0.1.0",
   "description": "A TS/SCSS implementation of Flow Free",
   "scripts": {
@@ -13,8 +13,8 @@
     "watch": "npm run build:watch"
   },
   "keywords": [
-    "wordle",
-    "kids"
+    "flow",
+    "game"
   ],
   "author": "dom111 <dom111@users.noreply.github.com>",
   "license": "MIT",
