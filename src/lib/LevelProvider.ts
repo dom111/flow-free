@@ -1,4 +1,4 @@
-import Colour from './Colour';
+import Colour, { assertIsColour } from './Colour';
 
 const levels: [number, number, string][] = [
   [3, 3, 'a1abc2bc'],
@@ -30,11 +30,11 @@ const loadFromString = (
 
   const cells = matches.flatMap((value: string): Colour | Colour[] => {
     if (/^\d+$/.test(value)) {
-      return new Array(parseInt(value)).fill(Colour.NONE);
+      return new Array(parseInt(value, 10)).fill(Colour.NONE);
     }
 
-    if (/^[a-z]/i.test(value)) {
-      return parseInt(value, 36) - 9;
+    if (/^[a-z]$/i.test(value)) {
+      return assertIsColour(value);
     }
 
     throw new TypeError(`Unknown level data '${value}'.`);
@@ -64,10 +64,53 @@ export class LevelProvider {
     return loadFromString(...levels[Math.floor(Math.random() * levels.length)]);
   }
 
-  fromURL(): LevelData {
-    const [height, width, levelString] = JSON.parse(
-      atob(this.#location.hash.slice(1))
-    );
+  fromURL(): LevelData | null {
+    const hashData = decodeURIComponent(this.#location.hash.slice(1));
+
+    if (hashData.length < 2) {
+      return null;
+    }
+
+    let jsonData: string;
+
+    try {
+      jsonData = atob(hashData);
+    } catch (e) {
+      if (!(e instanceof DOMException)) {
+        throw e;
+      }
+
+      jsonData = hashData;
+    }
+
+    if (!jsonData) {
+      return null;
+    }
+
+    let rawHashData: [number, number, string];
+
+    try {
+      rawHashData = JSON.parse(jsonData.replace(/'/g, '"'));
+    } catch (e) {
+      if (!(e instanceof SyntaxError)) {
+        throw e;
+      }
+
+      console.warn('Invalid JSON data provided: ' + jsonData);
+      return null;
+    }
+
+    if (
+      !(rawHashData instanceof Array) ||
+      rawHashData.length !== 3 ||
+      typeof rawHashData[0] !== 'number' ||
+      typeof rawHashData[1] !== 'number' ||
+      typeof rawHashData[2] !== 'string'
+    ) {
+      return null;
+    }
+
+    const [height, width, levelString] = rawHashData;
 
     return loadFromString(height, width, levelString);
   }

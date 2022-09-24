@@ -1,17 +1,25 @@
 import Element, { s } from './Element';
 import Path, { Status } from '../lib/Path';
 import Cell from './Cell';
+import Colour from '../lib/Colour';
 import PathFinder from '../lib/PathFinder';
 import Point from './Point';
+import TouchHighlight, { Status as HighlightStatus } from './TouchHighlight';
 
 export class Grid extends Element {
   #cellMap: Map<HTMLElement, Cell> = new Map();
   #currentPath: Path | null = null;
   #paths: Map<number, Path> = new Map();
   #height: number;
+  #touchHighlight: TouchHighlight;
   #width: number;
 
-  constructor(height: number, width: number, cells: Cell[] = []) {
+  constructor(
+    height: number,
+    width: number,
+    cells: Cell[],
+    touchHighlight: TouchHighlight
+  ) {
     super(s('<div class="grid"></div>'));
 
     this.setSize(height, width);
@@ -21,6 +29,8 @@ export class Grid extends Element {
 
       this.append(cell);
     });
+
+    this.#touchHighlight = touchHighlight;
 
     this.bindEvents();
   }
@@ -54,6 +64,8 @@ export class Grid extends Element {
 
         existingPath.push(cell);
 
+        this.#touchHighlight.setColour(existingPath.colour());
+
         return;
       }
 
@@ -64,6 +76,8 @@ export class Grid extends Element {
 
         existingPath.breakAt(cell);
 
+        this.#touchHighlight.setColour(existingPath.colour());
+
         return;
       }
 
@@ -71,6 +85,8 @@ export class Grid extends Element {
         this.#currentPath = existingPath;
 
         existingPath.setStatus(Status.DRAFT);
+
+        this.#touchHighlight.setColour(existingPath.colour());
 
         return;
       }
@@ -83,8 +99,36 @@ export class Grid extends Element {
 
       this.#currentPath = path;
 
+      this.#touchHighlight.setColour(path.colour());
+
       path.push(cell);
       this.#paths.set(path.colour(), path);
+    });
+
+    this.on('pointermove', (event) =>
+      this.handleHighlight(event, this.cellFromEvent(event))
+    );
+
+    this.on('touchmove', (event) => {
+      event.preventDefault();
+
+      const cell = this.cellFromEvent(event),
+        currentPath = this.#currentPath;
+
+      this.handleHighlight(event, cell);
+
+      if (
+        cell === null ||
+        currentPath === null ||
+        (currentPath &&
+          currentPath.status() === Status.COMPLETE &&
+          !currentPath.includes(cell)) ||
+        currentPath.last() === cell
+      ) {
+        return;
+      }
+
+      this.handleAddCellToCurrentPath(cell);
     });
 
     this.on(
@@ -93,6 +137,8 @@ export class Grid extends Element {
         if (!event.isPrimary) {
           return;
         }
+
+        event.preventDefault();
 
         const cell = this.cellFromEvent(event),
           currentPath = this.#currentPath;
@@ -115,10 +161,12 @@ export class Grid extends Element {
       }
     );
 
-    this.on('pointerup', () => {
+    this.on('pointerup', (event) => {
       if (this.#currentPath === null) {
         return;
       }
+
+      event.preventDefault();
 
       // TODO: break crossed paths
       this.#currentPath.setStatus(Status.FINAL);
@@ -130,6 +178,8 @@ export class Grid extends Element {
       }
 
       this.#currentPath = null;
+
+      this.#touchHighlight.setColour(Colour.NONE);
     });
   }
 
@@ -137,10 +187,13 @@ export class Grid extends Element {
     return Array.from(this.#cellMap.values());
   }
 
-  private cellFromEvent(event: PointerEvent): Cell | null {
+  private cellFromEvent(event: PointerEvent | TouchEvent): Cell | null {
     return (
       this.#cellMap.get(
-        document.elementFromPoint(event.pageX, event.pageY) as HTMLElement
+        document.elementFromPoint(
+          event instanceof TouchEvent ? event.touches[0].pageX : event.pageX,
+          event instanceof TouchEvent ? event.touches[0].pageY : event.pageY
+        ) as HTMLElement
       ) ?? null
     );
   }
@@ -177,6 +230,32 @@ export class Grid extends Element {
       pathFinder
         .shortestPath()
         .forEach((cell) => this.handleAddCellToCurrentPath(cell));
+    }
+  }
+
+  private handleHighlight(
+    event: TouchEvent | PointerEvent | MouseEvent,
+    cell: Cell
+  ): void {
+    this.#touchHighlight.move(event);
+
+    if (
+      cell instanceof Point &&
+      this.#currentPath?.length() > 1 &&
+      this.#currentPath?.first() !== cell
+    ) {
+      this.#touchHighlight.setStatus(HighlightStatus.GOOD);
+    }
+
+    if (
+      cell instanceof Point &&
+      cell.colour() !== this.#currentPath?.colour()
+    ) {
+      this.#touchHighlight.setStatus(HighlightStatus.INVALID);
+    }
+
+    if (!(cell instanceof Point)) {
+      this.#touchHighlight.setStatus(HighlightStatus.DEFAULT);
     }
   }
 

@@ -56,7 +56,8 @@ export class PathFinder {
         const node = createNode(neighbourCell, [...currentNode.stack, cell]);
 
         if (neighbourCell === this.#to) {
-          this.#candidates.push(node.stack);
+          // Ensure the final `Cell` is included in the stack.
+          this.#candidates.push(node.stack.concat([neighbourCell]));
 
           return;
         }
@@ -102,7 +103,7 @@ export class PathFinder {
   }
 
   /**
-   * Returns the shortest path from the source to the target, excluding the source Cell.
+   * Returns the shortest path from the source to the target.
    */
   shortestPath(): Cell[] {
     if (this.#candidates.length === 0) {

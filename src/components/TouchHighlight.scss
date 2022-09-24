@@ -1,0 +1,83 @@
+.touch-highlight {
+  border-radius: 50%;
+  --opacity: 0.4;
+  position: absolute;
+  height: calc(1.5 * var(--unit));
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  --unit: min(calc(100vh / var(--height)), calc(100vw / var(--width)));
+  width: calc(1.5 * var(--unit));
+  z-index: 2;
+
+  &.good {
+    --opacity: 0.6;
+  }
+
+  &.invalid {
+    --opacity: 0.1;
+  }
+
+  &.red {
+    background-color: rgba(var(--red), var(--opacity));
+  }
+
+  &.green {
+    background-color: rgba(var(--green), var(--opacity));
+  }
+
+  &.blue {
+    background-color: rgba(var(--blue), var(--opacity));
+  }
+
+  &.yellow {
+    background-color: rgba(var(--yellow), var(--opacity));
+  }
+
+  &.orange {
+    background-color: rgba(var(--orange), var(--opacity));
+  }
+
+  &.light-blue {
+    background-color: rgba(var(--light-blue), var(--opacity));
+  }
+
+  &.pink {
+    background-color: rgba(var(--pink), var(--opacity));
+  }
+
+  &.maroon {
+    background-color: rgba(var(--maroon), var(--opacity));
+  }
+
+  &.purple {
+    background-color: rgba(var(--purple), var(--opacity));
+  }
+
+  &.white {
+    background-color: rgba(var(--white), var(--opacity));
+  }
+
+  &.grey {
+    background-color: rgba(var(--grey), var(--opacity));
+  }
+
+  &.light-green {
+    background-color: rgba(var(--light-green), var(--opacity));
+  }
+
+  &.beige {
+    background-color: rgba(var(--beige), var(--opacity));
+  }
+
+  &.dark-blue {
+    background-color: rgba(var(--dark-blue), var(--opacity));
+  }
+
+  &.teal {
+    background-color: rgba(var(--teal), var(--opacity));
+  }
+
+  &.dark-pink {
+    background-color: rgba(var(--dark-pink), var(--opacity));
+  }
+}

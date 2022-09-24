@@ -1,15 +1,27 @@
+html {
+  display: flex;
+  justify-content: center;
+  max-height: calc(100vh - (100vh - 100%));
+  min-height: 100%;
+}
+
 body {
-  margin: 0;
-  padding: 0;
   background: #000;
+  display: flex;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
 }
 
 #app {
   align-items: center;
   display: flex;
-  height: 100vh;
+  height: 100%;
   justify-content: center;
   width: 100vw;
 }
 
+@import 'lib/Colour';
+@import 'components/Cell';
 @import 'components/Grid';
+@import 'components/TouchHighlight';

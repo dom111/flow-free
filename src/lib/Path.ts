@@ -194,10 +194,6 @@ export class Path {
       last.addConnection(this.isNeighbour(cell, last) as Connection);
       cell.addConnection(this.isNeighbour(last, cell) as Connection);
     }
-
-    if (this.complete()) {
-      this.setStatus(Status.COMPLETE);
-    }
   }
 
   setStatus(status: Status): void {

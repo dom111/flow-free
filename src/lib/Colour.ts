@@ -1,21 +1,21 @@
 export enum Colour {
-  NONE = null,
-  RED = 1,
-  GREEN,
-  BLUE,
-  YELLOW,
-  ORANGE,
-  LIGHT_BLUE,
-  PINK,
-  MAROON,
-  PURPLE,
-  WHITE,
-  GREY,
-  LIGHT_GREEN,
-  BEIGE,
-  DARK_BLUE,
-  TEAL,
-  DARK_PINK,
+  NONE,
+  RED = 'a',
+  GREEN = 'b',
+  BLUE = 'c',
+  YELLOW = 'd',
+  ORANGE = 'e',
+  LIGHT_BLUE = 'f',
+  PINK = 'g',
+  MAROON = 'h',
+  PURPLE = 'i',
+  WHITE = 'j',
+  GREY = 'k',
+  LIGHT_GREEN = 'l',
+  BEIGE = 'm',
+  DARK_BLUE = 'n',
+  TEAL = 'o',
+  DARK_PINK = 'p',
 }
 
 const colourToClassNameLookup = {
@@ -37,7 +37,17 @@ const colourToClassNameLookup = {
   [Colour.DARK_PINK]: 'dark-pink',
 };
 
-export const colourToClassName = (...colours: number[]): string[] =>
-  colours.map((colour) => colourToClassNameLookup[colour]);
+export const assertIsColour = (colour: any): Colour => {
+  if (!Object.values(Colour).includes(colour)) {
+    throw new TypeError(`Unknown Colour '${colour}'.`);
+  }
+
+  return colour;
+};
+
+export const colourToClassName = (...colours: Colour[]): string[] =>
+  colours
+    .filter((colour) => colour !== Colour.NONE)
+    .map((colour) => colourToClassNameLookup[colour]);
 
 export default Colour;
